@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
-#include <vector>
 using namespace std;
 
 class BigInt {
-    //
     string number;    // Stores the number as a string
     bool isNegative;  // True if number is negative
 
@@ -80,58 +78,13 @@ public:
 
     // Multiplication assignment operator (x *= y)
     BigInt& operator*=(const BigInt& other) {
-
-        if (number == "0" || other.number == "0") {
-            number == "0";
-            isNegative = false;
-            return*this;
-       }
-        bool resultNegative(isNegative != other.isNegative);
-        int n = number.size();
-        int m = other.number.size();
-        vector<int> result(n + m, 0);
-        for (int i = n - 1; i >= 0; i--) {
-            for (int j = m - 1; j >= 0; j--) {
-                int mul = (number[i] - '0') * (other.number[j] - '0');
-                int sum = mul + result[i + j + 1];
-                result[i + j + 1] = sum % 10;
-                result[i + j] += sum / 10;
-            }
-        }
-        string product;
-        int i = 0;
-        while (i < result.size() && result[i] == 0) i++;
-        for (; i < result.size(); i++) product.push_back(result[i] + '0');
+        // TODO: Implement this operator
         return *this;
     }
 
     // Division assignment operator (x /= y)
     BigInt& operator/=(const BigInt& other) {
-        if (other.number == "0") {
-            throw runtime_error("Division by zero");
-        }
-
-        BigInt divisor = other;
-        divisor.isNegative = false;
-
-        BigInt dividend = *this;
-        dividend.isNegative = false;
-
-        if (dividend.compareMagnitude(divisor) < 0) {
-            number = "0";
-            isNegative = false;
-            return *this;
-        }
-
-        bool resultNegative = (isNegative != other.isNegative);
-        BigInt count(0);
-
-        while (dividend.compareMagnitude(divisor) >= 0) {
-            dividend -= divisor;
-            count += BigInt(1);
-        }
-
-        *this = count;
+        // TODO: Implement this operator
         return *this;
     }
 
