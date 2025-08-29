@@ -4,6 +4,7 @@
 using namespace std;
 
 class BigInt {
+    //
     string number;    // Stores the number as a string
     bool isNegative;  // True if number is negative
 
