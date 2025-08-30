@@ -23,6 +23,8 @@ class BigInt {
 public:
     // Default constructor - initialize to zero
     BigInt() {
+        number = "0";
+        isNegative = false;
         // TODO: Implement this constructor
     }
 
