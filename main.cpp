@@ -44,9 +44,7 @@ public:
     }
 
     // Destructor
-    ~BigInt() {
-        // TODO: Implement if needed
-    }
+    ~BigInt() = default;
 
     // Assignment operator
     BigInt& operator=(const BigInt& other) {
