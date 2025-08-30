@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -135,8 +135,16 @@ public:
     }
 
     // Modulus assignment operator (x %= y)
+    pair<BigInt, BigInt> divide(const BigInt& dividend, const BigInt& divisor);
+
     BigInt& operator%=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (other.number == "0") {
+            throw invalid_argument("Modulo by zero");
+        }
+
+        auto [quotient, remainder] = divide(*this, other);
+
+        *this = remainder;  
         return *this;
     }
 
@@ -168,8 +176,13 @@ public:
 
     // Convert BigInt to string representation
     string toString() const {
-        // TODO: Implement this function
-        return "";
+        if (number == "0") return "0";  
+
+        string result = number;
+        if (isNegative) {
+            result = "-" + result;    
+        }
+        return result;
     }
 
     // Output stream operator (for printing)
@@ -205,23 +218,20 @@ BigInt operator-(BigInt lhs, const BigInt& rhs) {
 
 // Binary multiplication operator (x * y)
 BigInt operator*(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs *= rhs;   
+    return lhs;   
 }
 
 // Binary division operator (x / y)
 BigInt operator/(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs /= rhs;   
+    return lhs;   
 }
 
 // Binary modulus operator (x % y)
 BigInt operator%(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs %= rhs;   
+    return lhs;  
 }
 
 // Equality comparison operator (x == y)
