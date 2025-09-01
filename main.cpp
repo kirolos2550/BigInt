@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
-#include <vector>
 using namespace std;
 
 class BigInt {
-    //
     string number;    // Stores the number as a string
     bool isNegative;  // True if number is negative
 
@@ -21,11 +19,10 @@ class BigInt {
     }
 
 public:
-    // Default constructor - initialize to zero
+    // Default constructor - initialize to zero: kirolos (✅)
     BigInt() {
         number = "0";
         isNegative = false;
-        // TODO: Implement this constructor
     }
 
     // Constructor from 64-bit integer
@@ -43,7 +40,7 @@ public:
         // TODO: Implement this constructor
     }
 
-    // Destructor
+    // Destructor: kirolos (✅)
     ~BigInt() = default;
 
     // Assignment operator
@@ -59,79 +56,60 @@ public:
         return result;
     }
 
-    // Unary plus operator (+x)
+    // Unary plus operator (+x): kirolos (✅)
     BigInt operator+() const {
         BigInt result;
         // TODO: Implement this operator
+        result.number = this->number;
+        result.isNegative = this->isNegative;
         return result;
     }
 
-    // Addition assignment operator (x += y)
+    // Addition assignment operator (x += y): kirolos
     BigInt& operator+=(const BigInt& other) {
-        // TODO: Implement this operator
+        string num1 = this->number;
+        string num2 = other.number;
+
+        if (num1.length() < num2.length())
+            num1.insert(0, num2.length() - num1.length(), '0');
+        else if (num2.length() < num1.length())
+            num2.insert(0, num1.length() - num2.length(), '0');
+
+        string result = "";
+        int carry = 0;
+
+        for (int i = num1.length() - 1; i >= 0; --i) {
+            int digit1 = num1[i] - '0';
+            int digit2 = num2[i] - '0';
+
+            int sum = digit1 + digit2 + carry;
+            result.insert(result.begin(), char((sum % 10) + '0'));
+            carry = sum / 10;
+        }
+
+        if (carry)
+            result.insert(result.begin(), char(carry + '0'));
+
+        this->number = result;
         return *this;
     }
 
-    // Subtraction assignment operator (x -= y)
-    BigInt& operator-=(const BigInt& other) {
-        // TODO: Implement this operator
-        return *this;
-    }
+
+        // Subtraction assignment operator (x -= y)
+        BigInt& operator-=(const BigInt& other) {
+            // TODO: Implement this operator
+            return *this;
+        }
 
     // Multiplication assignment operator (x *= y)
     BigInt& operator*=(const BigInt& other) {
-
-        if (number == "0" || other.number == "0") {
-            number == "0";
-            isNegative = false;
-            return*this;
-       }
-        bool resultNegative(isNegative != other.isNegative);
-        int n = number.size();
-        int m = other.number.size();
-        vector<int> result(n + m, 0);
-        for (int i = n - 1; i >= 0; i--) {
-            for (int j = m - 1; j >= 0; j--) {
-                int mul = (number[i] - '0') * (other.number[j] - '0');
-                int sum = mul + result[i + j + 1];
-                result[i + j + 1] = sum % 10;
-                result[i + j] += sum / 10;
-            }
-        }
-        string product;
-        int i = 0;
-        while (i < result.size() && result[i] == 0) i++;
-        for (; i < result.size(); i++) product.push_back(result[i] + '0');
+        // TODO: Implement this operator
         return *this;
     }
 
     // Division assignment operator (x /= y)
     BigInt& operator/=(const BigInt& other) {
-        if (other.number == "0") {
-            throw runtime_error("Division by zero");
-        }
-
-        BigInt divisor = other;
-        divisor.isNegative = false;
-
-        BigInt dividend = *this;
-        dividend.isNegative = false;
-
-        if (dividend.compareMagnitude(divisor) < 0) {
-            number = "0";
-            isNegative = false;
-            return *this;
-        }
-
-        bool resultNegative = (isNegative != other.isNegative);
-        BigInt count(0);
-
-        while (dividend.compareMagnitude(divisor) >= 0) {
-            dividend -= divisor;
-            count += BigInt(1);
-        }
-
-        *this = count;
+        // TODO: Implement this operator
         return *this;
     }
 
@@ -141,13 +119,13 @@ public:
         return *this;
     }
 
-    // Pre-increment operator (++x)
+    // Pre-increment operator (++x): kirolos
     BigInt& operator++() {
         // TODO: Implement this operator
         return *this;
     }
 
-    // Post-increment operator (x++)
+    // Post-increment operator (x++): kirolos
     BigInt operator++(int) {
         BigInt temp;
         // TODO: Implement this operator
@@ -190,7 +168,7 @@ public:
     friend bool operator<(const BigInt& lhs, const BigInt& rhs);
 };
 
-// Binary addition operator (x + y)
+// Binary addition operator (x + y): kirolos
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
     BigInt result;
     // TODO: Implement this operator
