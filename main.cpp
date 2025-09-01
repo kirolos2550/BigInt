@@ -19,7 +19,7 @@ class BigInt {
     }
 
 public:
-    // Default constructor - initialize to zero: kirolos (✅)
+    // Default constructor - initialize to zero:
     BigInt() {
         number = "0";
         isNegative = false;
@@ -40,7 +40,7 @@ public:
         // TODO: Implement this constructor
     }
 
-    // Destructor: kirolos (✅)
+    // Destructor: kirolos
     ~BigInt() = default;
 
     // Assignment operator
@@ -56,7 +56,7 @@ public:
         return result;
     }
 
-    // Unary plus operator (+x): kirolos (✅)
+    // Unary plus operator (+x):
     BigInt operator+() const {
         BigInt result;
         // TODO: Implement this operator
@@ -65,7 +65,7 @@ public:
         return result;
     }
 
-    // Addition assignment operator (x += y): kirolos
+    // Addition assignment operator (x += y)
     BigInt& operator+=(const BigInt& other) {
         string num1 = this->number;
         string num2 = other.number;
@@ -119,13 +119,13 @@ public:
         return *this;
     }
 
-    // Pre-increment operator (++x): kirolos
+    // Pre-increment operator (++x):
     BigInt& operator++() {
         *this += BigInt("1");
         return *this;
     }
 
-    // Post-increment operator (x++): kirolos
+    // Post-increment operator (x++):
     BigInt operator++(int) {
         BigInt temp = *this;
         *this += BigInt("1");
@@ -169,10 +169,11 @@ public:
     friend bool operator<(const BigInt& lhs, const BigInt& rhs);
 };
 
-// Binary addition operator (x + y): kirolos
+// Binary addition operator (x + y):
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
     BigInt result;
     // TODO: Implement this operator
+    result=lhs+rhs;
     return result;
 }
 
