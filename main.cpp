@@ -121,16 +121,17 @@ public:
 
     // Pre-increment operator (++x): kirolos
     BigInt& operator++() {
-        // TODO: Implement this operator
+        *this += BigInt("1");
         return *this;
     }
 
     // Post-increment operator (x++): kirolos
     BigInt operator++(int) {
-        BigInt temp;
-        // TODO: Implement this operator
+        BigInt temp = *this;
+        *this += BigInt("1");
         return temp;
     }
+
 
     // Pre-decrement operator (--x)
     BigInt& operator--() {
