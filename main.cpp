@@ -22,6 +22,11 @@ class BigInt {
     // Returns: 1 if |this| > |other|, 0 if equal, -1 if |this| < |other|
     int compareMagnitude(const BigInt& other) const {
         // TODO: Implement this function
+        if (number.size() > other.number.size()) return 1;
+        if (number.size() < other.number.size()) return -1;
+
+        if (number == other.number) return 0;
+        return (number > other.number) ? 1 : -1;
         return 0;
     }
 
@@ -303,37 +308,45 @@ BigInt operator%(BigInt lhs, const BigInt& rhs) {
 // Equality comparison operator (x == y)
 bool operator==(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-    return false;
+    return lhs.isNegative == rhs.isNegative && lhs.number == rhs.number; 
 }
 
 // Inequality comparison operator (x != y)
 bool operator!=(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-    return false;
+    return !(lhs == rhs);
 }
 
 // Less-than comparison operator (x < y)
 bool operator<(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-    return false;
+    if (lhs.isNegative != rhs.isNegative)
+        return lhs.isNegative; 
+
+    int cmp = lhs.compareMagnitude(rhs);
+    if (!lhs.isNegative) { 
+        return cmp < 0; 
+    } else { 
+        return cmp > 0; 
+    }
 }
 
 // Less-than-or-equal comparison operator (x <= y)
 bool operator<=(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-    return false;
+    return (lhs < rhs) || (lhs == rhs);
 }
 
 // Greater-than comparison operator (x > y)
 bool operator>(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-    return false;
+    return !(lhs <= rhs);
 }
 
 // Greater-than-or-equal comparison operator (x >= y)
 bool operator>=(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-    return false;
+    return !(lhs < rhs);
 }
 
 int main() {
