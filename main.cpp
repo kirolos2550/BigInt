@@ -22,8 +22,10 @@ class BigInt {
 public:
     // Default constructor - initialize to zero
     BigInt() {
-        // TODO: Implement this constructor
+        number = "0";
+        isNegative = false;
     }
+
 
     // Constructor from 64-bit integer
     BigInt(int64_t value) {
@@ -41,9 +43,7 @@ public:
     }
 
     // Destructor
-    ~BigInt() {
-        // TODO: Implement if needed
-    }
+    ~BigInt() = default;
 
     // Assignment operator
     BigInt& operator=(const BigInt& other) {
@@ -62,14 +62,41 @@ public:
     BigInt operator+() const {
         BigInt result;
         // TODO: Implement this operator
+        result.number = this->number;
+        result.isNegative = this->isNegative;
         return result;
     }
 
+
     // Addition assignment operator (x += y)
     BigInt& operator+=(const BigInt& other) {
-        // TODO: Implement this operator
+        string num1 = this->number;
+        string num2 = other.number;
+
+        if (num1.length() < num2.length())
+            num1.insert(0, num2.length() - num1.length(), '0');
+        else if (num2.length() < num1.length())
+            num2.insert(0, num1.length() - num2.length(), '0');
+
+        string result = "";
+        int carry = 0;
+
+        for (int i = num1.length() - 1; i >= 0; --i) {
+            int digit1 = num1[i] - '0';
+            int digit2 = num2[i] - '0';
+
+            int sum = digit1 + digit2 + carry;
+            result.insert(result.begin(), char((sum % 10) + '0'));
+            carry = sum / 10;
+        }
+
+        if (carry)
+            result.insert(result.begin(), char(carry + '0'));
+
+        this->number = result;
         return *this;
     }
+
 
     // Subtraction assignment operator (x -= y)
     BigInt& operator-=(const BigInt& other) {
@@ -148,18 +175,18 @@ public:
         return *this;
     }
 
-    // Pre-increment operator (++x)
     BigInt& operator++() {
-        // TODO: Implement this operator
+        *this += BigInt("1");
         return *this;
     }
 
-    // Post-increment operator (x++)
+    // Post-increment operator (x++):
     BigInt operator++(int) {
-        BigInt temp;
-        // TODO: Implement this operator
+        BigInt temp = *this;
+        *this += BigInt("1");
         return temp;
     }
+
 
     // Pre-decrement operator (--x)
     BigInt& operator--() {
@@ -206,8 +233,10 @@ public:
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
     BigInt result;
     // TODO: Implement this operator
+    result=lhs+rhs;
     return result;
 }
+
 
 // Binary subtraction operator (x - y)
 BigInt operator-(BigInt lhs, const BigInt& rhs) {
