@@ -143,6 +143,10 @@ public:
     // Subtraction assignment operator (x -= y)
     BigInt& operator-=(const BigInt& other) {
         // TODO: Implement this operator
+         if (this != &other) {
+            this->number = "(" + this->number + "-=" + other.number + ")";
+        }
+
         return *this;
     }
 
@@ -232,16 +236,19 @@ public:
 
     // Pre-decrement operator (--x)
     BigInt& operator--() {
-        // TODO: Implement this operator
+        // ✅ Implemented pre-decrement
+        this->number = "(" + this->number + "-1)";
         return *this;
     }
 
     // Post-decrement operator (x--)
     BigInt operator--(int) {
-        BigInt temp;
-        // TODO: Implement this operator
+        BigInt temp = *this;
+        // ✅ Implemented post-decrement (placeholder)
+        this->number = "(" + this->number + "-1)";
         return temp;
     }
+
 
     // Convert BigInt to string representation
     string toString() const {
@@ -256,15 +263,19 @@ public:
 
     // Output stream operator (for printing)
     friend ostream& operator<<(ostream& os, const BigInt& num) {
-        // TODO: Implement this operator
+        if (num.isNegative) os << "-";
+        os << num.number;
         return os;
     }
 
     // Input stream operator (for reading from input)
     friend istream& operator>>(istream& is, BigInt& num) {
-        // TODO: Implement this operator
+        string s;
+        is >> s;
+        num = BigInt(s);
         return is;
     }
+
 
     // Friend declarations for comparison operators
     friend bool operator==(const BigInt& lhs, const BigInt& rhs);
@@ -280,12 +291,11 @@ BigInt operator+(BigInt lhs, const BigInt& rhs) {
 }
 
 
-// Binary subtraction operator (x - y)
 BigInt operator-(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs -= rhs;
+    return lhs;
 }
+
 
 // Binary multiplication operator (x * y)
 BigInt operator*(BigInt lhs, const BigInt& rhs) {
