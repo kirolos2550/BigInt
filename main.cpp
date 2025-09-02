@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 class BigInt {
@@ -19,11 +20,12 @@ class BigInt {
     }
 
 public:
-    // Default constructor - initialize to zero:
+    // Default constructor - initialize to zero
     BigInt() {
         number = "0";
         isNegative = false;
     }
+
 
     // Constructor from 64-bit integer
     BigInt(int64_t value) {
@@ -40,7 +42,7 @@ public:
         // TODO: Implement this constructor
     }
 
-    // Destructor: kirolos
+    // Destructor
     ~BigInt() = default;
 
     // Assignment operator
@@ -56,7 +58,7 @@ public:
         return result;
     }
 
-    // Unary plus operator (+x):
+    // Unary plus operator (+x)
     BigInt operator+() const {
         BigInt result;
         // TODO: Implement this operator
@@ -64,6 +66,7 @@ public:
         result.isNegative = this->isNegative;
         return result;
     }
+
 
     // Addition assignment operator (x += y)
     BigInt& operator+=(const BigInt& other) {
@@ -95,31 +98,83 @@ public:
     }
 
 
-        // Subtraction assignment operator (x -= y)
-        BigInt& operator-=(const BigInt& other) {
-            // TODO: Implement this operator
-            return *this;
-        }
+    // Subtraction assignment operator (x -= y)
+    BigInt& operator-=(const BigInt& other) {
+        // TODO: Implement this operator
+        return *this;
+    }
 
     // Multiplication assignment operator (x *= y)
     BigInt& operator*=(const BigInt& other) {
-        // TODO: Implement this operator
+
+        if (number == "0" || other.number == "0") {
+            number == "0";
+            isNegative = false;
+            return*this;
+        }
+        bool resultNegative(isNegative != other.isNegative);
+        int n = number.size();
+        int m = other.number.size();
+        vector<int> result(n + m, 0);
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                int mul = (number[i] - '0') * (other.number[j] - '0');
+                int sum = mul + result[i + j + 1];
+                result[i + j + 1] = sum % 10;
+                result[i + j] += sum / 10;
+            }
+        }
+        string product;
+        int i = 0;
+        while (i < result.size() && result[i] == 0) i++;
+        for (; i < result.size(); i++) product.push_back(result[i] + '0');
         return *this;
     }
 
     // Division assignment operator (x /= y)
     BigInt& operator/=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (other.number == "0") {
+            throw runtime_error("Division by zero");
+        }
+
+        BigInt divisor = other;
+        divisor.isNegative = false;
+
+        BigInt dividend = *this;
+        dividend.isNegative = false;
+
+        if (dividend.compareMagnitude(divisor) < 0) {
+            number = "0";
+            isNegative = false;
+            return *this;
+        }
+
+        bool resultNegative = (isNegative != other.isNegative);
+        BigInt count(0);
+
+        while (dividend.compareMagnitude(divisor) >= 0) {
+            dividend -= divisor;
+            count += BigInt(1);
+        }
+
+        *this = count;
         return *this;
     }
 
     // Modulus assignment operator (x %= y)
+    pair<BigInt, BigInt> divide(const BigInt& dividend, const BigInt& divisor);
+
     BigInt& operator%=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (other.number == "0") {
+            throw invalid_argument("Modulo by zero");
+        }
+
+        auto [quotient, remainder] = divide(*this, other);
+
+        *this = remainder;
         return *this;
     }
 
-    // Pre-increment operator (++x):
     BigInt& operator++() {
         *this += BigInt("1");
         return *this;
@@ -148,8 +203,13 @@ public:
 
     // Convert BigInt to string representation
     string toString() const {
-        // TODO: Implement this function
-        return "";
+        if (number == "0") return "0";
+
+        string result = number;
+        if (isNegative) {
+            result = "-" + result;
+        }
+        return result;
     }
 
     // Output stream operator (for printing)
@@ -169,13 +229,14 @@ public:
     friend bool operator<(const BigInt& lhs, const BigInt& rhs);
 };
 
-// Binary addition operator (x + y):
+// Binary addition operator (x + y)
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
     BigInt result;
     // TODO: Implement this operator
     result=lhs+rhs;
     return result;
 }
+
 
 // Binary subtraction operator (x - y)
 BigInt operator-(BigInt lhs, const BigInt& rhs) {
@@ -186,23 +247,20 @@ BigInt operator-(BigInt lhs, const BigInt& rhs) {
 
 // Binary multiplication operator (x * y)
 BigInt operator*(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs *= rhs;
+    return lhs;
 }
 
 // Binary division operator (x / y)
 BigInt operator/(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs /= rhs;
+    return lhs;
 }
 
 // Binary modulus operator (x % y)
 BigInt operator%(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs %= rhs;
+    return lhs;
 }
 
 // Equality comparison operator (x == y)
