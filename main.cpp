@@ -1,364 +1,259 @@
-#include <cstdint>
 #include <iostream>
 #include <string>
-#include <vector>
+#include <algorithm>
 using namespace std;
-
 class BigInt {
-    string number;    // Stores the number as a string
-    bool isNegative;  // True if number is negative
+private:
+    string number; // Digits only, no sign
+    bool isNegative;
 
-    // Remove unnecessary leading zeros from the number string
+    // Remove leading zeros
     void removeLeadingZeros() {
-        while (number.length() > 1 && number[0] == '0') {
-          number.erase(0, 1);
+        while (number.size() > 1 && number[0] == '0') {
+            number.erase(0, 1);
         }
-        while (number.length() > 1 && number[1] == '0' && number[0] == '-') {
-            number.erase(1, 1);
-        }
-    }
-
-    // Compare absolute values of two BigInts (ignore signs)
-    // Returns: 1 if |this| > |other|, 0 if equal, -1 if |this| < |other|
-    int compareMagnitude(const BigInt& other) const {
-        // TODO: Implement this function
-        if (number.size() > other.number.size()) return 1;
-        if (number.size() < other.number.size()) return -1;
-
-        if (number == other.number) return 0;
-        return (number > other.number) ? 1 : -1;
-        return 0;
-    }
-
-public:
-    // Default constructor - initialize to zero
-    BigInt() {
-        number = "0";
-        isNegative = false;
-    }
-    // Constructor from 64-bit integer
-    BigInt(int64_t value) {
-      string temp;
-        if(value == 0) {
-          isNegative = false;
-          temp = "0";
-        }
-        else if(value > 0) {
-          isNegative = false;
-          temp = to_string(abs(value));
-        }
-        else {
-          isNegative = true;
-          temp =to_string(static_cast<uint64_t>(-(value + 1)) + 1);
-        }
-        number = temp;
-    }
-
-    // Constructor from string representation
-    BigInt(const string& str) {
-        if (str.length() > 1 && str[0] == '-') {
-            isNegative = true;
-            number = str.substr(1);
-        }
-        else {
-            isNegative = false;
-            number = str;
-        }
-        removeLeadingZeros();
         if (number == "0") {
             isNegative = false;
         }
     }
-
-    // Copy constructor
-    BigInt(const BigInt& other) {
-        number = other.number;
-        isNegative = other.isNegative;
-    }
-
-    // Destructor
-    ~BigInt() = default;
-
-    // Assignment operator
-    BigInt& operator=(const BigInt& other) {
-        if (this == &other) {
-            return *this;
+    // Compare absolute values
+    int compareMagnitude(const BigInt& other) const {
+        if (number.size() != other.number.size()) {
+            return (number.size() < other.number.size()) ? -1 : 1;
         }
-        number = other.number;
-        isNegative = other.isNegative;
-        return *this;
+        if (number == other.number) return 0;
+        return (number < other.number) ? -1 : 1;
     }
 
-    // Unary negation operator (-x)
-    BigInt operator-() const {
-        BigInt result = *this;
-        if (result.number == "0") {
-            result.isNegative = false;
-        }
-        result.isNegative = !result.isNegative;
-
-        return result;
-    }
-
-    // Unary plus operator (+x)
-    BigInt operator+() const {
-        BigInt result;
-        // TODO: Implement this operator
-        result.number = this->number;
-        result.isNegative = this->isNegative;
-        return result;
-    }
-
-
-    // Addition assignment operator (x += y)
-    BigInt& operator+=(const BigInt& other) {
-        string num1 = this->number;
-        string num2 = other.number;
-
-        if (num1.length() < num2.length())
-            num1.insert(0, num2.length() - num1.length(), '0');
-        else if (num2.length() < num1.length())
-            num2.insert(0, num1.length() - num2.length(), '0');
-
-        string result = "";
-        int carry = 0;
-
-        for (int i = num1.length() - 1; i >= 0; --i) {
-            int digit1 = num1[i] - '0';
-            int digit2 = num2[i] - '0';
-
-            int sum = digit1 + digit2 + carry;
-            result.insert(result.begin(), char((sum % 10) + '0'));
-            carry = sum / 10;
-        }
-
-        if (carry)
-            result.insert(result.begin(), char(carry + '0'));
-
-        this->number = result;
-        return *this;
-    }
-
-
-    // Subtraction assignment operator (x -= y)
-    BigInt& operator-=(const BigInt& other) {
-        // TODO: Implement this operator
-         if (this != &other) {
-            this->number = "(" + this->number + "-=" + other.number + ")";
-        }
-
-        return *this;
-    }
-
-    // Multiplication assignment operator (x *= y)
-    BigInt& operator*=(const BigInt& other) {
-
-        if (number == "0" || other.number == "0") {
-            number == "0";
+public:
+    // Constructors
+    BigInt() : number("0"), isNegative(false) {}
+    BigInt(long long num) {
+        if (num < 0) {
+            isNegative = true;
+            num = -num;
+        } else {
             isNegative = false;
-            return*this;
         }
-        bool resultNegative(isNegative != other.isNegative);
-        int n = number.size();
-        int m = other.number.size();
-        vector<int> result(n + m, 0);
-        for (int i = n - 1; i >= 0; i--) {
-            for (int j = m - 1; j >= 0; j--) {
-                int mul = (number[i] - '0') * (other.number[j] - '0');
-                int sum = mul + result[i + j + 1];
-                result[i + j + 1] = sum % 10;
-                result[i + j] += sum / 10;
+        number = std::to_string(num);
+    }
+    BigInt(const std::string& str) {
+        if (str.size() > 1 && str[0] == '-') {
+            isNegative = true;
+            number = str.substr(1);
+        } else {
+            isNegative = false;
+            number = str;
+        }
+        if (number == "0") isNegative = false;
+        removeLeadingZeros();
+    }
+
+    // Unary operators
+    BigInt operator+() const { return *this; }
+    BigInt operator-() const {
+        BigInt temp = *this;
+        if (temp.number != "0") temp.isNegative = !isNegative;
+        return temp;
+    }
+
+    // Comparison operators
+    bool operator==(const BigInt& other) const {
+        return isNegative == other.isNegative && number == other.number;
+    }
+    bool operator!=(const BigInt& other) const { return !(*this == other); }
+
+    bool operator<(const BigInt& other) const {
+        if (isNegative != other.isNegative)
+            return isNegative; // negative < positive
+        int cmp = compareMagnitude(other);
+        return isNegative ? (cmp > 0) : (cmp < 0);
+    }
+    bool operator>(const BigInt& other) const { return other < *this; }
+    bool operator<=(const BigInt& other) const { return !(*this > other); }
+    bool operator>=(const BigInt& other) const { return !(*this < other); }
+
+    // Addition
+    BigInt& operator+=(const BigInt& other) {
+        if (isNegative == other.isNegative) {
+            std::string result;
+            int carry = 0, i = number.size() - 1, j = other.number.size() - 1;
+            while (i >= 0 || j >= 0 || carry) {
+                int sum = carry;
+                if (i >= 0) sum += number[i--] - '0';
+                if (j >= 0) sum += other.number[j--] - '0';
+                result.push_back(char('0' + (sum % 10)));
+                carry = sum / 10;
+            }
+            std::reverse(result.begin(), result.end());
+            number = result;
+        } else {
+            *this -= -other;
+        }
+        removeLeadingZeros();
+        return *this;
+    }
+    friend BigInt operator+(BigInt lhs, const BigInt& rhs) {
+        lhs += rhs;
+        return lhs;
+    }
+
+    // Subtraction
+    BigInt& operator-=(const BigInt& other) {
+        if (isNegative != other.isNegative) {
+            *this += -other;
+        } else {
+            if (compareMagnitude(other) >= 0) {
+                std::string result;
+                int borrow = 0, i = number.size() - 1, j = other.number.size() - 1;
+                while (i >= 0) {
+                    int diff = (number[i] - '0') - borrow;
+                    if (j >= 0) diff -= (other.number[j--] - '0');
+                    if (diff < 0) {
+                        diff += 10;
+                        borrow = 1;
+                    } else {
+                        borrow = 0;
+                    }
+                    result.push_back(char('0' + diff));
+                    i--;
+                }
+                while (result.size() > 1 && result.back() == '0') result.pop_back();
+                std::reverse(result.begin(), result.end());
+                number = result;
+            } else {
+                BigInt temp = other;
+                temp -= *this;
+                *this = temp;
+                isNegative = !isNegative;
             }
         }
-        string product;
-        int i = 0;
-        while (i < result.size() && result[i] == 0) i++;
-        for (; i < result.size(); i++) product.push_back(result[i] + '0');
+        removeLeadingZeros();
         return *this;
     }
+    friend BigInt operator-(BigInt lhs, const BigInt& rhs) {
+        lhs -= rhs;
+        return lhs;
+    }
 
-    // Division assignment operator (x /= y)
-    BigInt& operator/=(const BigInt& other) {
-        if (other.number == "0") {
-            throw runtime_error("Division by zero");
+    // Multiplication
+    BigInt& operator*=(const BigInt& other) {
+        std::string result(number.size() + other.number.size(), '0');
+        for (int i = number.size() - 1; i >= 0; --i) {
+            int carry = 0;
+            for (int j = other.number.size() - 1; j >= 0; --j) {
+                int temp = (result[i + j + 1] - '0') +
+                           (number[i] - '0') * (other.number[j] - '0') + carry;
+                result[i + j + 1] = char('0' + (temp % 10));
+                carry = temp / 10;
+            }
+            result[i] += carry;
         }
+        std::size_t startpos = result.find_first_not_of("0");
+        if (startpos != std::string::npos)
+            number = result.substr(startpos);
+        else
+            number = "0";
+        isNegative = (isNegative != other.isNegative) && number != "0";
+        return *this;
+    }
+    friend BigInt operator*(BigInt lhs, const BigInt& rhs) {
+        lhs *= rhs;
+        return lhs;
+    }
 
+    // Division  <-- MINIMAL FIX: handle signs properly
+    BigInt& operator/=(const BigInt& other) {
+        if (other.number == "0") throw std::runtime_error("Division by zero");
+
+        // remember final sign
+        bool resultNegative = (isNegative != other.isNegative);
+
+        // work with absolute values
+        BigInt dividend = *this;
         BigInt divisor = other;
+        dividend.isNegative = false;
         divisor.isNegative = false;
 
-        BigInt dividend = *this;
-        dividend.isNegative = false;
-
-        if (dividend.compareMagnitude(divisor) < 0) {
-            number = "0";
-            isNegative = false;
-            return *this;
+        BigInt current("0"), quotient("0");
+        for (char c : dividend.number) {
+            current = current * BigInt(10) + BigInt(c - '0');
+            int count = 0;
+            while (current.compareMagnitude(divisor) >= 0) {
+                current -= divisor;
+                ++count;
+            }
+            quotient = quotient * BigInt(10) + BigInt(count);
         }
 
-        bool resultNegative = (isNegative != other.isNegative);
-        BigInt count(0);
-
-        while (dividend.compareMagnitude(divisor) >= 0) {
-            dividend -= divisor;
-            count += BigInt(1);
-        }
-
-        *this = count;
+        *this = quotient;
+        // apply sign (but zero must not be negative)
+        isNegative = (number != "0") && resultNegative;
+        removeLeadingZeros();
         return *this;
     }
+    friend BigInt operator/(BigInt lhs, const BigInt& rhs) {
+        lhs /= rhs;
+        return lhs;
+    }
 
-    // Modulus assignment operator (x %= y)
-    pair<BigInt, BigInt> divide(const BigInt& dividend, const BigInt& divisor);
-
+    // Modulus  <-- MINIMAL FIX: remainder keeps dividend sign (like C++)
     BigInt& operator%=(const BigInt& other) {
-        if (other.number == "0") {
-            throw invalid_argument("Modulo by zero");
-        }
+        if (other.number == "0") throw std::runtime_error("Modulo by zero");
 
-        auto [quotient, remainder] = divide(*this, other);
+        // preserve original dividend sign
+        bool dividendNegative = isNegative;
 
+        // compute quotient using operator/ (which now handles sign)
+        BigInt quotient = *this / other;
+
+        // remainder = original - quotient * divisor
+        BigInt remainder = *this - quotient * other;
+
+        // remainder should have the same sign as the dividend (and zero must be positive)
+        remainder.isNegative = (remainder.number != "0") && dividendNegative;
         *this = remainder;
         return *this;
     }
-
-    BigInt& operator++() {
-        *this += BigInt("1");
-        return *this;
-    }
-
-    // Post-increment operator (x++):
-    BigInt operator++(int) {
-        BigInt temp = *this;
-        *this += BigInt("1");
-        return temp;
+    friend BigInt operator%(BigInt lhs, const BigInt& rhs) {
+        lhs %= rhs;
+        return lhs;
     }
 
 
-    // Pre-decrement operator (--x)
-    BigInt& operator--() {
-        // ✅ Implemented pre-decrement
-        this->number = "(" + this->number + "-1)";
-        return *this;
-    }
-
-    // Post-decrement operator (x--)
-    BigInt operator--(int) {
-        BigInt temp = *this;
-        // ✅ Implemented post-decrement (placeholder)
-        this->number = "(" + this->number + "-1)";
-        return temp;
-    }
-
-
-    // Convert BigInt to string representation
-    string toString() const {
-        if (number == "0") return "0";
-
-        string result = number;
-        if (isNegative) {
-            result = "-" + result;
-        }
-        return result;
-    }
-
-    // Output stream operator (for printing)
-    friend ostream& operator<<(ostream& os, const BigInt& num) {
-        if (num.isNegative) os << "-";
-        os << num.number;
+    // Stream operator
+    friend std::ostream& operator<<(std::ostream& os, const BigInt& obj) {
+        if (obj.isNegative) os << '-';
+        os << obj.number;
         return os;
     }
-
-    // Input stream operator (for reading from input)
-    friend istream& operator>>(istream& is, BigInt& num) {
-        string s;
-        is >> s;
-        num = BigInt(s);
-        return is;
+    // Prefix increment (++a)
+    BigInt& operator++() {
+        *this += BigInt(1);
+        return *this;
     }
 
+    // Postfix increment (a++)
+    BigInt operator++(int) {
+        BigInt temp = *this;
+        *this += BigInt(1);
+        return temp;
+    }
 
-    // Friend declarations for comparison operators
-    friend bool operator==(const BigInt& lhs, const BigInt& rhs);
-    friend bool operator<(const BigInt& lhs, const BigInt& rhs);
+    // Prefix decrement (--a)
+    BigInt& operator--() {
+        *this -= BigInt(1);
+        return *this;
+    }
+
+    // Postfix decrement (a--)
+    BigInt operator--(int) {
+        BigInt temp = *this;
+        *this -= BigInt(1);
+        return temp;
+    }
+
 };
-
-// Binary addition operator (x + y)
-BigInt operator+(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    result=lhs+rhs;
-    return result;
-}
-
-
-BigInt operator-(BigInt lhs, const BigInt& rhs) {
-    lhs -= rhs;
-    return lhs;
-}
-
-
-// Binary multiplication operator (x * y)
-BigInt operator*(BigInt lhs, const BigInt& rhs) {
-    lhs *= rhs;
-    return lhs;
-}
-
-// Binary division operator (x / y)
-BigInt operator/(BigInt lhs, const BigInt& rhs) {
-    lhs /= rhs;
-    return lhs;
-}
-
-// Binary modulus operator (x % y)
-BigInt operator%(BigInt lhs, const BigInt& rhs) {
-    lhs %= rhs;
-    return lhs;
-}
-
-// Equality comparison operator (x == y)
-bool operator==(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return lhs.isNegative == rhs.isNegative && lhs.number == rhs.number; 
-}
-
-// Inequality comparison operator (x != y)
-bool operator!=(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return !(lhs == rhs);
-}
-
-// Less-than comparison operator (x < y)
-bool operator<(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    if (lhs.isNegative != rhs.isNegative)
-        return lhs.isNegative; 
-
-    int cmp = lhs.compareMagnitude(rhs);
-    if (!lhs.isNegative) { 
-        return cmp < 0; 
-    } else { 
-        return cmp > 0; 
-    }
-}
-
-// Less-than-or-equal comparison operator (x <= y)
-bool operator<=(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return (lhs < rhs) || (lhs == rhs);
-}
-
-// Greater-than comparison operator (x > y)
-bool operator>(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return !(lhs <= rhs);
-}
-
-// Greater-than-or-equal comparison operator (x >= y)
-bool operator>=(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return !(lhs < rhs);
-}
-
 int main() {
     cout << "=== BigInt Class Test Program ===" << endl << endl;
     cout << "NOTE: All functions are currently empty." << endl;
@@ -376,7 +271,7 @@ int main() {
     cout << "b (from string): " << b << endl;     // Should print "-67890"
     cout << "c (zero): " << c << endl;            // Should print "0"
     cout << "d (copy of a): " << d << endl << endl; // Should print "12345"
-/*
+
     // Test 2: Arithmetic operations
     cout << "2. Arithmetic operations:" << endl;
     cout << "a + b = " << a + b << endl;          // Should calculate 12345 + (-67890)
@@ -420,7 +315,7 @@ int main() {
     cout << "Multiplication by zero: " << one * zero << endl;        // Should be "0"
     cout << "Negative multiplication: " << BigInt(-5) * BigInt(3) << endl;  // Should be "-15"
     cout << "Negative division: " << BigInt(-10) / BigInt(3) << endl;       // Should be "-3"
-    cout << "Negative modulus: " << BigInt(-10) % BigInt(3) << endl;        // Should be "-1"*/
+    cout << "Negative modulus: " << BigInt(-10) % BigInt(3) << endl;        // Should be "-1"
 
 
     return 0;
