@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,7 +10,12 @@ class BigInt {
 
     // Remove unnecessary leading zeros from the number string
     void removeLeadingZeros() {
-        // TODO: Implement this function
+        while (number.length() > 1 && number[0] == '0') {
+          number.erase(0, 1);
+        }
+        while (number.length() > 1 && number[1] == '0' && number[0] == '-') {
+            number.erase(1, 1);
+        }
     }
 
     // Compare absolute values of two BigInts (ignore signs)
@@ -25,21 +31,44 @@ public:
         number = "0";
         isNegative = false;
     }
-
-
     // Constructor from 64-bit integer
     BigInt(int64_t value) {
-        // TODO: Implement this constructor
+      string temp;
+        if(value == 0) {
+          isNegative = false;
+          temp = "0";
+        }
+        else if(value > 0) {
+          isNegative = false;
+          temp = to_string(abs(value));
+        }
+        else {
+          isNegative = true;
+          temp =to_string(static_cast<uint64_t>(-(value + 1)) + 1);
+        }
+        number = temp;
     }
 
     // Constructor from string representation
     BigInt(const string& str) {
-        // TODO: Implement this constructor
+        if (str.length() > 1 && str[0] == '-') {
+            isNegative = true;
+            number = str.substr(1);
+        }
+        else {
+            isNegative = false;
+            number = str;
+        }
+        removeLeadingZeros();
+        if (number == "0") {
+            isNegative = false;
+        }
     }
 
     // Copy constructor
     BigInt(const BigInt& other) {
-        // TODO: Implement this constructor
+        number = other.number;
+        isNegative = other.isNegative;
     }
 
     // Destructor
@@ -47,14 +76,22 @@ public:
 
     // Assignment operator
     BigInt& operator=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (this == &other) {
+            return *this;
+        }
+        number = other.number;
+        isNegative = other.isNegative;
         return *this;
     }
 
     // Unary negation operator (-x)
     BigInt operator-() const {
-        BigInt result;
-        // TODO: Implement negation logic
+        BigInt result = *this;
+        if (result.number == "0") {
+            result.isNegative = false;
+        }
+        result.isNegative = !result.isNegative;
+
         return result;
     }
 
@@ -305,7 +342,7 @@ int main() {
     cout << "Your task is to implement ALL the functions above." << endl;
     cout << "The tests below will work once you implement them correctly." << endl << endl;
 
-    /*
+
     // Test 1: Constructors and basic output
     cout << "1. Constructors and output:" << endl;
     BigInt a(12345);              // Should create BigInt from integer
@@ -316,7 +353,7 @@ int main() {
     cout << "b (from string): " << b << endl;     // Should print "-67890"
     cout << "c (zero): " << c << endl;            // Should print "0"
     cout << "d (copy of a): " << d << endl << endl; // Should print "12345"
-
+/*
     // Test 2: Arithmetic operations
     cout << "2. Arithmetic operations:" << endl;
     cout << "a + b = " << a + b << endl;          // Should calculate 12345 + (-67890)
@@ -360,8 +397,8 @@ int main() {
     cout << "Multiplication by zero: " << one * zero << endl;        // Should be "0"
     cout << "Negative multiplication: " << BigInt(-5) * BigInt(3) << endl;  // Should be "-15"
     cout << "Negative division: " << BigInt(-10) / BigInt(3) << endl;       // Should be "-3"
-    cout << "Negative modulus: " << BigInt(-10) % BigInt(3) << endl;        // Should be "-1"
-    */
+    cout << "Negative modulus: " << BigInt(-10) % BigInt(3) << endl;        // Should be "-1"*/
+
 
     return 0;
 }
